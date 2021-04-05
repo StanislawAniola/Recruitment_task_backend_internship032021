@@ -1,5 +1,7 @@
 import sys
 from functools import wraps
+import json
+import csv
 
 
 class Currency():
@@ -125,3 +127,37 @@ class Currency():
                 print(f'Longest consecutive period was from {start_date} to {end_date} with increase of ${price}')
 
         display_longest_increasing_period(result)
+
+    def export_currency(self, export_structure, file_name):
+        """
+        export currency in csv or json
+        :param export_structure: json or csv
+        :param file_name: name of the file to write data
+        """
+        data_to_export = self.currency_data
+
+        if export_structure == "json":
+            for i in data_to_export:
+                i.pop('name', None)
+                i["price"] = round(i["price"], 2)
+
+            dict_order_key = map(lambda x: {"date": x["date"], "price": x["price"]}, data_to_export)
+
+            with open(f'./{file_name}', 'w', newline='') as outfile:
+                json.dump(list(dict_order_key), outfile, indent=4, separators=(',', ': '))
+            print(f"{file_name} has been generated")
+        elif export_structure == "csv":
+            keys = data_to_export[0].keys()
+            column_names = list(keys)[1:]
+            date_col = column_names[1].capitalize()
+            price_col = 9*" " + column_names[0].capitalize()
+            with open(f'./{file_name}', 'w', newline='') as output_file:
+                dict_writer = csv.DictWriter(output_file, fieldnames=[date_col, price_col], delimiter=",")
+                dict_writer.writeheader()
+
+                for data in data_to_export:
+                    date = data["date"]
+                    price = "   {0:10}".format(data["price"])
+
+                    dict_writer.writerow({date_col: date, price_col: price})
+            print(f"{file_name} has been generated")
