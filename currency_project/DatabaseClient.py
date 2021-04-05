@@ -55,3 +55,31 @@ class DatabaseClient():
             print(e)
         finally:
             cursor.close()
+
+    def check_if_data_in_database(self, conn):
+        """
+        check if selected range already is in range_date table
+        :param conn: Connection object
+        """
+        sql_get_date = """
+                       SELECT currency_name, start_date, end_date
+                       FROM range_date 
+                       WHERE currency_name='{currency_name}' AND start_date='{start_date}' AND end_date='{end_date}'
+                       """
+        sql_get_date = sql_get_date.format(currency_name=self.currency_name,
+                                           start_date=self.start_date, end_date=self.end_date)
+
+        cursor = conn.cursor()
+        try:
+            date_in_database = cursor.execute(sql_get_date)
+            selected_date_range = False
+
+            for i in date_in_database:
+                if len(i) == 3:
+                    selected_date_range = True
+                    print("Selected date range already in the database")
+            return selected_date_range
+        except Error as e:
+            print(e)
+        finally:
+            cursor.close()
