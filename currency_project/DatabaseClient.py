@@ -137,3 +137,32 @@ class DatabaseClient():
             print(e)
         finally:
             cursor.close()
+
+    def get_data_from_database(self, conn):
+        """
+        get data selected data from currency_data table
+        :param conn: Connection object
+        """
+        sql_get_date = """
+                       SELECT currency_name, price, date
+                       FROM currency_data 
+                       WHERE currency_name='{name}' AND date >= '{start_date}' AND date <= '{end_date}'
+                       """
+        sql_get_date = sql_get_date.format(name=self.currency_name, start_date=self.start_date, end_date=self.end_date)
+        cursor = conn.cursor()
+        try:
+            result = cursor.execute(sql_get_date)
+
+            data_from_database = []
+            for i in result:
+                dict_format = {
+                    "name": i[0],
+                    "price": i[1],
+                    "date": i[2][0:10]
+                }
+                data_from_database.append(dict_format)
+            return data_from_database
+        except Error as e:
+            print(e)
+        finally:
+            cursor.close()
