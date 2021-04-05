@@ -83,3 +83,57 @@ class DatabaseClient():
             print(e)
         finally:
             cursor.close()
+
+    @staticmethod
+    def insert_data_to_database(conn, currency_data):
+        """
+        insert currency data to currency_data table
+        :param conn: Connection object
+        :param currency_data: currency data
+        """
+        cursor = conn.cursor()
+        try:
+            for i in currency_data:
+                date = datetime.strptime(i["date"], '%Y-%m-%d')
+
+                sqlite_insert_query = """
+                                      INSERT INTO currency_data (currency_name, price, date)
+                                      SELECT '{name}', {price}, '{date}'
+                                      WHERE NOT EXISTS(SELECT * 
+                                          FROM currency_data 
+                                          WHERE currency_name='{name}' AND date='{date}')
+                                      """
+
+                sqlite_insert_query = sqlite_insert_query.format(name=i["name"], price=i["price"], date=date)
+                cursor.execute(sqlite_insert_query)
+                conn.commit()
+            print("Records inserted successfully into table")
+        except Error as e:
+            print(e)
+        finally:
+            cursor.close()
+
+    def insert_date_data_range(self, conn):
+        """
+        insert selected date range into range_date table
+        :param conn: Connection object
+        """
+        sqlite_insert_query = """
+                              INSERT INTO range_date (currency_name, start_date, end_date)
+                              SELECT '{name}', '{start_date}', '{end_date}'
+                              WHERE NOT EXISTS(SELECT * 
+                              FROM range_date 
+                              WHERE currency_name='{name}' AND start_date='{start_date}' AND end_date='{end_date}')
+                              """
+        sqlite_insert_query = sqlite_insert_query.format(name=self.currency_name,
+                                                         start_date=self.start_date, end_date=self.end_date)
+
+        cursor = conn.cursor()
+        try:
+            cursor.execute(sqlite_insert_query)
+            conn.commit()
+            print("Record inserted successfully into SqliteDb_developers table ")
+        except Error as e:
+            print(e)
+        finally:
+            cursor.close()
