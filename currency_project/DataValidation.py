@@ -74,7 +74,8 @@ class DataValidation():
             file_csv = self.file_name + ".csv"
 
             if os.path.isfile(file_json) or os.path.isfile(file_csv):
-                print("File name exists, change file name or file will be filled with new data")
+                print("File name exists, change file name or file can be filled with new data if "
+                      "the file extension is not different")
 
                 question = 0
                 while question < 1:
