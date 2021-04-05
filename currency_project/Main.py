@@ -5,7 +5,7 @@ sys.path.append(parent_path)
 
 import argparse
 from datetime import datetime
-from Review import APIClient, DatabaseClient, Currency, DataValidation
+from currency_project import APIClient, DatabaseClient, Currency, DataValidation
 
 
 def arguments_validation(start_date, end_date, currency, file_name):
