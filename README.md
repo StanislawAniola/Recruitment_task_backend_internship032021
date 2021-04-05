@@ -23,7 +23,7 @@ Script allows to:
 3. Navigate to Recruitment_task_backend_internship032021 -> currency_project
 4. Activate virtual environment by writing in console:
     ```
-    source ../profil_venv/Scripts/activate
+    ./profil_venv/Scripts/activate
     ```
 
 ## How to use the script
